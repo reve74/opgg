@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:opgg/const/colors.dart';
 import 'package:opgg/model/summoner_league_model.dart';
 import 'package:opgg/model/summoner_model.dart';
 import 'package:opgg/repository/repository.dart';
+import 'package:opgg/repository/tier_level.dart';
 import 'package:opgg/screen/info_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -16,19 +18,13 @@ class _SearchScreenState extends State<SearchScreen> {
   SummonerModel? sm;
 
   Future<SummonerModel> getSummonerInfo({required String summonerId}) async {
-    final response =
+    final summonerModels =
         await SummonerRepository.getSummonerInfo(summonerId: summonerId);
-    print(response);
-    return response;
+    print(summonerModels);
+    return summonerModels;
   }
 
-  Future<SummonerLeagueModel> getSummonerLeagueInfo(
-      {required summonerId}) async {
-    final response =
-        await SummonerRepository.getSummonerLeagueInfo(summonerId: summonerId);
 
-    return response;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +37,7 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -55,9 +51,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: TextField(
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: primaryColor,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                          borderRadius: BorderRadius.circular(5.0),
                           // borderSide: BorderSide(color: Colors.black)
                         ),
                         enabledBorder: OutlineInputBorder(
@@ -82,11 +78,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
                           print('체크');
                           print(result);
-                          // final result2 = getSummonerLeagueInfo(summonerId: result['id']);
+                          // final result2 = getSummonerLeagueInfo(summonerId: result);
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => InfoScreen(
                                 future: result,
+                                smTier: tierLevel[6],
+
+
+                                // smModel: ,
                               ),
                             ),
                           );

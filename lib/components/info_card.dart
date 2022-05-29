@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:opgg/const/colors.dart';
 
 class InfoCard extends StatelessWidget {
   final String name;
   final String summonerLevel;
+  final String profileIconId;
 
   const InfoCard({
     required this.name,
     required this.summonerLevel,
+    required this.profileIconId,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return Column(
       children: [
         Stack(
@@ -41,7 +44,7 @@ class InfoCard extends StatelessWidget {
                           },
                           icon: const Icon(
                             Icons.arrow_back_ios,
-                            color: Colors.white,
+                            color: primaryColor,
                           ),
                         ),
                         IconButton(
@@ -49,6 +52,7 @@ class InfoCard extends StatelessWidget {
                           icon: Icon(
                             Icons.star_border_outlined,
                             color: Colors.grey[600],
+                            size: 30,
                           ),
                         ),
                       ],
@@ -56,17 +60,21 @@ class InfoCard extends StatelessWidget {
                     const SizedBox(height: 50),
                     Row(
                       children: [
-                        Container(
-                          height: 70,
-                          width: 70,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: Colors.blue,
-                          ),
-                          child: Column(
-                            children: [
-                              Spacer(),
-                              Center(
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(25.0),
+                              child: Image.network(
+                                'https://ddragon.leagueoflegends.com/cdn/10.11.1/img/profileicon/$profileIconId.png',
+                                width: 70,
+                                height: 70,
+                              ),
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              child: Center(
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12.0),
@@ -76,13 +84,14 @@ class InfoCard extends StatelessWidget {
                                   child: Text(
                                     summonerLevel,
                                     style: TextStyle(
-                                      color: Colors.white,
+                                        color: Colors.white,
+                                        fontSize: 13.0
                                     ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                         const SizedBox(width: 10),
                         Column(
@@ -91,11 +100,15 @@ class InfoCard extends StatelessWidget {
                             Text(
                               name,
                               style: TextStyle(
-                                  color: Colors.white, fontSize: 30.0),
+                                color: Colors.white,
+                                fontSize: 30.0,
+                              ),
                             ),
                             Text(
                               '래더 랭킹 1,465,841위',
-                              style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w700),
+                              style: TextStyle(
+                                  color: Colors.grey[500],
+                                  fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -111,7 +124,7 @@ class InfoCard extends StatelessWidget {
                           Expanded(
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.blueAccent,
+                                primary: Colors.indigoAccent[400],
                               ),
                               onPressed: () {},
                               child: Text('전적 갱신'),

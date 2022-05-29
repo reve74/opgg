@@ -23,7 +23,7 @@ class SummonerLeagueModel {
         queueType = json['queueType'] ?? '',
         tier = json['tier'] ?? '',
         rank = json['rank'] ?? '',
-        leaguePoints = int.parse(json['leaguePoints'] ?? 0),
-        wins = int.parse(json['wins'] ?? 0),
-        losses = int.parse(json['losses'] ?? 0);
+        leaguePoints = json['leaguePoints'] ?? '',
+        wins = json['wins'] ?? '',
+        losses = json['losses'] ?? '';
 }

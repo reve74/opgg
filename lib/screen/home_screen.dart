@@ -1,9 +1,60 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:opgg/components/search_text_field.dart';
+import 'package:opgg/const/colors.dart';
+import 'package:opgg/model/patch_note.dart';
 import 'package:opgg/screen/search_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' as parser;
+import 'package:opgg/screen/web_view_screen.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  WebViewController? controller;
+
+  var uri =
+      Uri.parse('https://www.leagueoflegends.com/ko-kr/news/tags/patch-notes/');
+  List<PatchNote> notes = [];
+  bool isLoading = false;
+
+  Future getPatchNote() async {
+    var res = await http.get(uri);
+    final body = utf8.decode(res.bodyBytes); // 한글깨짐 변환
+    final document = parser.parse(body);
+
+    document
+        .getElementsByClassName("style__WrapperInner-sc-106zuld-1 eInLGL")[0]
+        .getElementsByClassName("style__Item-sc-106zuld-3 a-DAap")
+        .forEach(
+      (element) {
+        setState(() {
+          notes.add(PatchNote(
+            title: element.children[0].children[0].children[1].children[0]
+                .children[1].text
+                .toString(),
+            imagePath: element.children[0].children[0].children[0].children[0]
+                .children[0].children[0].attributes['src']
+                .toString(),
+            link: element.children[0].attributes['href'].toString(),
+          ));
+        });
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getPatchNote();
+  }
 
   @override
   Widget topBar(BuildContext context) {
@@ -15,7 +66,7 @@ class HomeScreen extends StatelessWidget {
                 context, MaterialPageRoute(builder: (_) => SearchScreen()));
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
             child: Column(
               children: [
                 const SizedBox(height: 10),
@@ -29,14 +80,14 @@ class HomeScreen extends StatelessWidget {
         ),
         Container(
           color: Colors.black87,
-          height: 200,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
+          height: 170,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                child: Text(
                   '패치노트',
                   style: TextStyle(
                     color: Colors.white,
@@ -44,32 +95,72 @@ class HomeScreen extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 5.0),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(
-                      10,
-                          (index) => Container(
-                        margin: EdgeInsets.only(right: 10),
-                        width: 200,
-                        height: 100,
-                        color: Colors.red,
+              ),
+              const SizedBox(height: 5.0),
+              notes.length == 0
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Row(
+                          children: List.generate(
+                            3,
+                            (index) => patchNoteCard(index),
+                          ).toList(),
+                        ),
                       ),
-                    ).toList(),
-                  ),
-                ),
-              ],
-            ),
+                    ),
+            ],
           ),
         ),
       ],
     );
   }
 
+  // 패치노트 카드
+  Widget patchNoteCard(index) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => WebViewScreen(link: notes[index].link)));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5.0),
+              child: Image.network(
+                notes[index].imagePath,
+                fit: BoxFit.cover,
+                width: 200,
+                height: 100,
+              ),
+            ),
+            Positioned(
+              left: 10.0,
+              bottom: 5,
+              child: Text(
+                notes[index].title,
+                style: TextStyle(
+                    fontSize: 10.0,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: primaryColor,
       appBar: appbar(context),
       body: SafeArea(
         child: Column(
@@ -89,7 +180,7 @@ AppBar appbar(BuildContext context) {
     bottom: PreferredSize(
         preferredSize: Size(MediaQuery.of(context).size.width, 0),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -104,46 +195,42 @@ AppBar appbar(BuildContext context) {
               ),
               Row(
                 children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      height: 35,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 3.0),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
                       color: Colors.grey[100],
-                      child: Row(
-                        children: [
-                          Text(
-                            'KR',
-                            style: TextStyle(
-                                fontSize: 13.0, color: Colors.grey[600]),
-                          ),
-                          const SizedBox(width: 5),
-                          Icon(
-                            Icons.west_rounded,
-                            size: 20.0,
-                            color: Colors.grey[600],
-                          )
-                        ],
-                      ),
+                    ),
+                    height: 35,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 3.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          'KR',
+                          style: TextStyle(
+                              fontSize: 13.0, color: Colors.grey[600]),
+                        ),
+                        const SizedBox(width: 8.0),
+                        Image.asset(
+                          'asset/img/chevron.png',
+                          width: 20,
+                          color: Colors.grey[600],
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 8.0),
-                  IconButton(
-                    padding: EdgeInsets.zero,
-                    constraints: BoxConstraints(),
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.wrap_text_outlined,
-                      color: Colors.black,
-                    ),
+                  Image.asset(
+                    'asset/img/sort.png',
+                    width: 25,
                   ),
                 ],
               ),
             ],
           ),
         )),
-    backgroundColor: Colors.white,
+    backgroundColor: primaryColor,
     elevation: 0.0,
     // title: ,
   );
