@@ -57,6 +57,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    getPatchNote();
+    super.dispose();
+  }
+
+  @override
   Widget topBar(BuildContext context) {
     return Column(
       children: [

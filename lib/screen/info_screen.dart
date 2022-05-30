@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:opgg/components/info_card.dart';
 import 'package:opgg/components/info_list_card.dart';
 import 'package:opgg/components/rank_card.dart';
@@ -12,11 +11,11 @@ class InfoScreen extends StatefulWidget {
   final Future<SummonerModel> future;
   final SummonerTier smTier;
   // final SummonerLeagueModel smLeague;
-  // final String id;
+
   // final String name;
   // final int summonerLevel;
 
-  const InfoScreen({
+  InfoScreen({
     required this.future,
     required this.smTier,
     // required this.smLeague,
@@ -42,6 +41,8 @@ class _InfoScreenState extends State<InfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String? summonerId;
+
     return Scaffold(
       body: FutureBuilder<SummonerModel>(
         future: widget.future,
@@ -54,12 +55,12 @@ class _InfoScreenState extends State<InfoScreen> {
           }
           SummonerModel sm = snapshot.data!;
 
-          print('-------');
-          print(sm.id);
-          final league = getSummonerLeagueInfo(summonerId: sm.id);
-          print(league);
+          summonerId = sm.id;
 
-          print('조회 성공');
+          print('-------');
+          final league = getSummonerLeagueInfo(summonerId: sm.id);
+
+          // print('조회 성공');
           return ListView(
             padding: EdgeInsets.zero,
             children: [
@@ -79,10 +80,32 @@ class _InfoScreenState extends State<InfoScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RankCard(
-                          imagePath: widget.smTier.imagePath,
-                          tier: widget.smTier.tier,
+                        FutureBuilder<SummonerLeagueModel>(
+                          future: getSummonerLeagueInfo(summonerId: summonerId),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Center(child: Text('에러가 있습니다'),);
+                            }
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            SummonerLeagueModel sl = snapshot.data!;
+                            return RankCard(
+                              imagePath: widget.smTier.imagePath,
+                              tier: sl.tier,
+                              rank: sl.rank.split('').length.toString(),
+                              wins: sl.wins,
+                              loses: sl.losses,
+                              leaguePoints: sl.leaguePoints,
+                            );
+                          },
                         ),
+
                         const SizedBox(height: 10.0),
                         // 최근 20경기 정보
                         SingleChildScrollView(
@@ -118,6 +141,7 @@ class _InfoScreenState extends State<InfoScreen> {
                   ),
                 ],
               ),
+              // Text(widget.id),
             ],
           );
         },

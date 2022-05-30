@@ -3,10 +3,18 @@ import 'package:flutter/material.dart';
 class RankCard extends StatelessWidget {
   final String imagePath;
   final String tier;
+  final String rank;
+  final int wins;
+  final int loses;
+  final int leaguePoints;
 
   const RankCard({
     required this.imagePath,
     required this.tier,
+    required this.rank,
+    required this.wins,
+    required this.loses,
+    required this.leaguePoints,
     Key? key,
   }) : super(key: key);
 
@@ -54,18 +62,18 @@ class RankCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '$tier 1',
+                            '$tier $rank',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15),
                           ),
                           Text(
-                            '72 LP',
+                            '$leaguePoints LP',
                             style: TextStyle(fontSize: 12.0),
                           ),
                           Text(
-                            '263승 247패 (52%)',
+                            '$wins승 $loses패 (52%)',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12.0,

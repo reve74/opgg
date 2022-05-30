@@ -20,15 +20,12 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<SummonerModel> getSummonerInfo({required String summonerId}) async {
     final summonerModels =
         await SummonerRepository.getSummonerInfo(summonerId: summonerId);
-    print(summonerModels);
+    // print(summonerModels);
     return summonerModels;
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    bool onTap = false;
 
     return Scaffold(
       body: SafeArea(
@@ -75,18 +72,28 @@ class _SearchScreenState extends State<SearchScreen> {
                       onSubmitted: (value) {
                         setState(() {
                           final result = getSummonerInfo(summonerId: value);
-
-                          print('체크');
-                          print(result);
+                          // FutureBuilder<SummonerModel>(
+                          //   future: result,
+                          //   builder: (context, snapshot) {
+                          //     if(snapshot.hasError) {
+                          //       return const Center(child: Text('에러가 있습니다'));
+                          //     }
+                          //     if(!snapshot.hasData) {
+                          //       return const Center(child: CircularProgressIndicator());
+                          //     }
+                          //     SummonerModel sm = snapshot.data!;
+                          //     print(sm);
+                          //     print(sm.id);
+                          //     return Container();
+                          //   },
+                          // );
                           // final result2 = getSummonerLeagueInfo(summonerId: result);
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => InfoScreen(
                                 future: result,
                                 smTier: tierLevel[6],
-
-
-                                // smModel: ,
+                                // id: sm!.id,
                               ),
                             ),
                           );
@@ -94,22 +101,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       },
                     ),
                   ),
-                  onTap
-                      ? TextButton(
-                          onPressed: () {
-                            setState(() {
-                              onTap = false;
-                              print(onTap);
-                            });
-                          },
-                          child: Text(
-                            '취소',
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      : SizedBox(),
                 ],
               ),
             ],

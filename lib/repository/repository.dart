@@ -24,7 +24,7 @@ class SummonerRepository {
         queryParameters: {
           'api_key': API_KEY,
         });
-    // print(response.data[0]['tier']);
+    print(response.data[0]['tier']);
     return SummonerLeagueModel.fromJson(json: response.data[0]);
   }
 }

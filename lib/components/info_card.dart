@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:opgg/const/colors.dart';
 
+
 class InfoCard extends StatelessWidget {
   final String name;
   final String summonerLevel;
@@ -65,7 +66,7 @@ class InfoCard extends StatelessWidget {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(25.0),
                               child: Image.network(
-                                'https://ddragon.leagueoflegends.com/cdn/10.11.1/img/profileicon/$profileIconId.png',
+                                'https://ddragon.leagueoflegends.com/cdn/12.10.1/img/profileicon/$profileIconId.png',
                                 width: 70,
                                 height: 70,
                               ),
