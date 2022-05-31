@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:opgg/components/info_card.dart';
 import 'package:opgg/components/info_list_card.dart';
+import 'package:opgg/components/match_card.dart';
 import 'package:opgg/components/rank_card.dart';
 import 'package:opgg/model/summoner_league_model.dart';
 import 'package:opgg/model/summoner_model.dart';
@@ -9,20 +10,12 @@ import 'package:opgg/repository/repository.dart';
 
 class InfoScreen extends StatefulWidget {
   final Future<SummonerModel> future;
-  final SummonerTier smTier;
-  // final SummonerLeagueModel smLeague;
+  // final SummonerTier smTier;
 
-  // final String name;
-  // final int summonerLevel;
-
-  InfoScreen({
+  const InfoScreen({
     required this.future,
-    required this.smTier,
-    // required this.smLeague,
-    // required this.smModel,
-    // required this.id,
-    // required this.name,
-    // required this.summonerLevel,
+    // required this.smTier,
+
     Key? key,
   }) : super(key: key);
 
@@ -31,6 +24,7 @@ class InfoScreen extends StatefulWidget {
 }
 
 class _InfoScreenState extends State<InfoScreen> {
+
   Future<SummonerLeagueModel> getSummonerLeagueInfo(
       {required summonerId}) async {
     final response =
@@ -39,9 +33,28 @@ class _InfoScreenState extends State<InfoScreen> {
     return response;
   }
 
+  Future<List> getMatchIdFromSummoner({required puuid}) async{
+    final response = await SummonerRepository.getMatchIdFromSummoner(puuid: puuid);
+    // List matchList = [];
+    // matchList.addAll(response);
+
+    print(response);
+
+    return response;
+  }
+
+
+  Future getMatch({required matchId}) async {
+    final response = await SummonerRepository.getMatch(matchId: matchId);
+
+    print(response);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     String? summonerId;
+    String? puuid;
 
     return Scaffold(
       body: FutureBuilder<SummonerModel>(
@@ -54,19 +67,19 @@ class _InfoScreenState extends State<InfoScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           SummonerModel sm = snapshot.data!;
-
           summonerId = sm.id;
+          puuid = sm.puuid;
 
-          print('-------');
-          final league = getSummonerLeagueInfo(summonerId: sm.id);
+          final matchList = getMatchIdFromSummoner(puuid: puuid);
+          print(matchList);
+          // final res = match.add(matchList);
 
-          // print('조회 성공');
+
           return ListView(
             padding: EdgeInsets.zero,
             children: [
               Column(
                 children: [
-                  // Text('id : ${sm.id}'),
                   // 상단 카드
                   InfoCard(
                     name: '${sm.name}',
@@ -84,7 +97,9 @@ class _InfoScreenState extends State<InfoScreen> {
                           future: getSummonerLeagueInfo(summonerId: summonerId),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
-                              return const Center(child: Text('에러가 있습니다'),);
+                              return const Center(
+                                child: Text('에러가 있습니다'),
+                              );
                             }
                             if (!snapshot.hasData) {
                               return const Center(
@@ -96,7 +111,7 @@ class _InfoScreenState extends State<InfoScreen> {
 
                             SummonerLeagueModel sl = snapshot.data!;
                             return RankCard(
-                              imagePath: widget.smTier.imagePath,
+                              // imagePath: widget.smTier.imagePath,
                               tier: sl.tier,
                               rank: sl.rank.split('').length.toString(),
                               wins: sl.wins,
@@ -126,18 +141,11 @@ class _InfoScreenState extends State<InfoScreen> {
                   ),
                   Container(
                     height: 8,
-                    color: Colors.grey[300],
+                    color: Colors.grey[200],
                   ),
                   ...List.generate(
                     5,
-                    (index) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Container(
-                        height: 120,
-                        width: MediaQuery.of(context).size.width,
-                        color: Colors.blue,
-                      ),
-                    ),
+                    (index) => MatchCard(),
                   ),
                 ],
               ),

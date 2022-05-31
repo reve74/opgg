@@ -1,1 +1,1 @@
-const API_KEY = 'API_KEY';
+const API_KEY = 'RGAPI-f7a202ae-c8b2-4b1f-9323-12b3eba4d05e';

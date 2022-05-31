@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RankCard extends StatelessWidget {
-  final String imagePath;
+  // final String imagePath;
   final String tier;
   final String rank;
   final int wins;
@@ -9,7 +9,7 @@ class RankCard extends StatelessWidget {
   final int leaguePoints;
 
   const RankCard({
-    required this.imagePath,
+    // required this.imagePath,
     required this.tier,
     required this.rank,
     required this.wins,
@@ -20,6 +20,9 @@ class RankCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 승률
+    final winningRate = (wins/(wins+loses)*100).round();
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -37,7 +40,7 @@ class RankCard extends StatelessWidget {
               child: Row(
                 children: [
                   Image.asset(
-                   imagePath,
+                   'asset/img/${tier.toLowerCase()}.png',
                     width: 70,
                   ),
                   const SizedBox(width: 10),
@@ -73,7 +76,7 @@ class RankCard extends StatelessWidget {
                             style: TextStyle(fontSize: 12.0),
                           ),
                           Text(
-                            '$wins승 $loses패 (52%)',
+                            '$wins승 $loses패 ($winningRate%)',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12.0,
@@ -106,7 +109,7 @@ class RankCard extends StatelessWidget {
               child: Row(
                 children: [
                   Image.asset(
-                    imagePath,
+                    'asset/img/${tier.toLowerCase()}.png',
                     width: 70,
                   ),
                   const SizedBox(width: 10),
@@ -131,18 +134,18 @@ class RankCard extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '$tier 2',
+                            '$tier $rank',
                             style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15),
                           ),
                           Text(
-                            '10 LP',
+                            '$leaguePoints LP',
                             style: TextStyle(fontSize: 12.0),
                           ),
                           Text(
-                            '33승 0패 (100%)',
+                            '$wins승 $loses패 ($winningRate%)',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12.0,

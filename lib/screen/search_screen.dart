@@ -72,27 +72,12 @@ class _SearchScreenState extends State<SearchScreen> {
                       onSubmitted: (value) {
                         setState(() {
                           final result = getSummonerInfo(summonerId: value);
-                          // FutureBuilder<SummonerModel>(
-                          //   future: result,
-                          //   builder: (context, snapshot) {
-                          //     if(snapshot.hasError) {
-                          //       return const Center(child: Text('에러가 있습니다'));
-                          //     }
-                          //     if(!snapshot.hasData) {
-                          //       return const Center(child: CircularProgressIndicator());
-                          //     }
-                          //     SummonerModel sm = snapshot.data!;
-                          //     print(sm);
-                          //     print(sm.id);
-                          //     return Container();
-                          //   },
-                          // );
-                          // final result2 = getSummonerLeagueInfo(summonerId: result);
+
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (_) => InfoScreen(
                                 future: result,
-                                smTier: tierLevel[6],
+                                // smTier: tierLevel[6],
                                 // id: sm!.id,
                               ),
                             ),

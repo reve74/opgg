@@ -84,7 +84,7 @@ class InfoCard extends StatelessWidget {
                                   padding: EdgeInsets.all(2.0),
                                   child: Text(
                                     summonerLevel,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 13.0
                                     ),
@@ -100,7 +100,7 @@ class InfoCard extends StatelessWidget {
                           children: [
                             Text(
                               name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 30.0,
                               ),
@@ -128,7 +128,7 @@ class InfoCard extends StatelessWidget {
                                 primary: Colors.indigoAccent[400],
                               ),
                               onPressed: () {},
-                              child: Text('전적 갱신'),
+                              child: const Text('전적 갱신'),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -138,7 +138,7 @@ class InfoCard extends StatelessWidget {
                                 primary: Colors.grey[400],
                               ),
                               onPressed: () {},
-                              child: Text('인게임'),
+                              child: const Text('인게임'),
                             ),
                           ),
                         ],

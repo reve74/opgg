@@ -6,9 +6,6 @@ class SummonerModel {
   final int profileIconId;
   final int revisionDate;
   final int summonerLevel;
-  // final double profileIconId;
-  // final double revisionDate;
-  // final double summonerLevel;
 
   SummonerModel({
     required this.id,
