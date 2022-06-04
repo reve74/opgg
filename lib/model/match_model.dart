@@ -11,7 +11,9 @@ class MatchModel {
   final int item4;
   final int item5;
   final int item6;
-  final String win;
+  final bool win;
+  final String summonerName;
+  final String puuid;
 
   MatchModel({
     required this.kills,
@@ -27,6 +29,8 @@ class MatchModel {
     required this.item5,
     required this.item6,
     required this.win,
+    required this.summonerName,
+    required this.puuid,
   });
 
   MatchModel.fromJson({required Map<String, dynamic> json})
@@ -42,5 +46,7 @@ class MatchModel {
         item4 = json['item4'] ?? '',
         item5 = json['item5'] ?? '',
         item6 = json['item6'] ?? '',
-        win = json['win'] ?? '';
+        win = json['win'] ?? '',
+        summonerName = json['summonerName'] ?? '',
+        puuid = json['puuid'] ?? '';
 }

@@ -24,7 +24,6 @@ class InfoScreen extends StatefulWidget {
 }
 
 class _InfoScreenState extends State<InfoScreen> {
-
   Future<SummonerLeagueModel> getSummonerLeagueInfo(
       {required summonerId}) async {
     final response =
@@ -33,22 +32,17 @@ class _InfoScreenState extends State<InfoScreen> {
     return response;
   }
 
-  Future<List> getMatchIdFromSummoner({required puuid}) async{
-    final response = await SummonerRepository.getMatchIdFromSummoner(puuid: puuid);
+  Future<List> getMatchIdFromSummoner({required puuid}) async {
+    final response =
+        await SummonerRepository.getMatchIdFromSummoner(puuid: puuid);
     // List matchList = [];
     // matchList.addAll(response);
 
-    print(response);
+    // print(response);
 
     return response;
   }
 
-
-  Future getMatch({required matchId}) async {
-    final response = await SummonerRepository.getMatch(matchId: matchId);
-
-    print(response);
-  }
 
 
   @override
@@ -70,10 +64,8 @@ class _InfoScreenState extends State<InfoScreen> {
           summonerId = sm.id;
           puuid = sm.puuid;
 
-          final matchList = getMatchIdFromSummoner(puuid: puuid);
-          print(matchList);
-          // final res = match.add(matchList);
-
+          // final matchList = getMatchIdFromSummoner(puuid: puuid);
+          // print(matchList);
 
           return ListView(
             padding: EdgeInsets.zero,
@@ -143,10 +135,25 @@ class _InfoScreenState extends State<InfoScreen> {
                     height: 8,
                     color: Colors.grey[200],
                   ),
-                  ...List.generate(
-                    5,
-                    (index) => MatchCard(),
+                  // ...List.generate(
+                  //   5,
+                  //   (index) =>
+                  FutureBuilder<List>(
+                    future: getMatchIdFromSummoner(puuid: sm.puuid),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Center(child: Text('에러'));
+                      }
+                      if (!snapshot.hasData) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      final matchList = snapshot.data;
+                      print(matchList);
+                      return MatchCard(matchList: matchList!, puuid: sm.puuid,);
+                    },
                   ),
+                  // ),
                 ],
               ),
               // Text(widget.id),
