@@ -1,1 +1,5 @@
-const API_KEY = 'RGAPI-46fbeb9e-66f7-462a-9631-2ce3c97e4233';
+const API_KEY = 'RGAPI-366f5abf-7415-4bc5-a721-482198786994';
+
+const PROFILE_ICON_API = 'https://ddragon.leagueoflegends.com/cdn/12.10.1/img/profileicon/';
+const CHAMPION_API = 'https://ddragon.leagueoflegends.com/cdn/12.10.1/img/champion/';
+const ITEM_API = 'https://ddragon.leagueoflegends.com/cdn/12.10.1/img/item/';

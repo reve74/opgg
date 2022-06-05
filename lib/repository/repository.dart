@@ -37,7 +37,7 @@ class SummonerRepository {
         'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/$puuid/ids?',
         queryParameters: {
           'start': 0,
-          'count': 2,
+          'count': 5,
           'api_key': API_KEY,
         });
     // print(response.data);
@@ -53,11 +53,6 @@ class SummonerRepository {
           'api_key': API_KEY,
         });
 
-    // print(response.data['info']['participants']
-    //     .map<MatchModel>(
-    //       (e) => MatchModel.fromJson(json: e),
-    // )
-    //     .toList());
 
     // print(response.data['info']['participants']
     //     .map<MatchModel>((e) => MatchModel.fromJson(json: e))
@@ -74,6 +69,8 @@ class SummonerRepository {
     // return response.data['info']['participants'].where<MatchModel>((ele) =>MatchModel.fromJson(json: ele)).toList();
 
     // return MatchModel.fromJson(json: response.data['info']['participants'][0]);
+
+
 
     return response.data['info']['participants']
         .map<MatchModel>(

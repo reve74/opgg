@@ -16,7 +16,8 @@ class MatchCard extends StatelessWidget {
 
   Future<List<MatchModel>> getMatch({required matchId, required puuid}) async {
     // Map<, MatchModel> matches = {};
-    final response = await SummonerRepository.getMatch(matchId: matchId, puuid: puuid);
+    final response =
+        await SummonerRepository.getMatch(matchId: matchId, puuid: puuid);
 
     // List<Future> futures = [];
     // final results = await Future.wait(futures);
@@ -30,7 +31,6 @@ class MatchCard extends StatelessWidget {
     return response;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -41,7 +41,8 @@ class MatchCard extends StatelessWidget {
             .entries
             .map(
               (e) => Card(
-                future: getMatch(matchId: e.value, puuid: puuid), puuid: puuid,
+                future: getMatch(matchId: e.value, puuid: puuid),
+                puuid: puuid,
               ),
             )
             .toList(),
@@ -49,9 +50,6 @@ class MatchCard extends StatelessWidget {
     );
   }
 }
-
-
-
 
 class Card extends StatelessWidget {
   final Future<List<MatchModel>> future;
@@ -67,7 +65,7 @@ class Card extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<List<MatchModel>>(
       future: future,
-      builder: (BuildContext context,AsyncSnapshot snapshot) {
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
           return const Center(child: Text('에러가 있습니다'));
         }
@@ -76,12 +74,19 @@ class Card extends StatelessWidget {
         }
 
         List<MatchModel> match = snapshot.data!;
-        // print(match.length);
+
+        final myMatch =
+            match.where((element) => element.puuid.contains(puuid)).toList();
+
+        final myMatchDetails = myMatch[0];
+        final gameDuration = (myMatchDetails.challenges['gameLength'] / 60)
+            .toStringAsFixed(2)
+            .split('.');
+
         // match.where((puuid) => MatchModel.fromJson(json: puuid)).toList();
 
-        print(match[0].puuid == puuid);
+        // print(match.map((e) => e.puuid == puuid));
 
-        print(match[0].championName);
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Container(
@@ -92,16 +97,26 @@ class Card extends StatelessWidget {
               children: [
                 Container(
                   width: 50,
-                  color: Colors.indigoAccent[400],
+                  color: myMatchDetails.win
+                      ? Colors.indigoAccent[400]
+                      : Colors.red,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '승',
-                        style: TextStyle(
-                          color: Colors.white,
+                      if (myMatchDetails.win)
+                        const Text(
+                          '승',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        )
+                      else
+                        const Text(
+                          '패',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 6.0),
@@ -112,7 +127,7 @@ class Card extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '27:26',
+                        '${gameDuration[0]}:${(int.parse(gameDuration[1]) * 6 / 10).floor()}',
                         style: TextStyle(
                           color: Colors.white,
                         ),
@@ -121,45 +136,98 @@ class Card extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  color: Colors.lightBlue,
+                  color: Colors.white,
                   width: 240,
                   height: MediaQuery.of(context).size.height,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  child: Column(
                     children: [
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        width: 45,
-                        height: 45,
-                        child: Image.network('https://ddragon.leagueoflegends.com/cdn/12.10.1/img/champion/${match[0].championName}.png'),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          iconCard(),
-                          const SizedBox(
-                            height: 5,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.network(
+                                CHAMPION_API+'${myMatch[0].championName}.png', fit: BoxFit.cover,
+                              width: 45,
+                              height: 45,
+                            ),
                           ),
-                          iconCard(),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              iconCard(),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              iconCard(),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              iconCard(),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              iconCard(),
+                            ],
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${myMatchDetails.kills}/${myMatchDetails.deaths}/${myMatchDetails.assists}',
+                                style: TextStyle(fontSize: 22.0),
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                '${((myMatchDetails.kills+myMatchDetails.assists)/myMatchDetails.deaths).toStringAsFixed(2)}:1 평점',
+                                style: TextStyle(fontSize: 12.0),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      const SizedBox(height: 5.0),
+                      Row(
                         children: [
-                          iconCard(),
-                          const SizedBox(
-                            height: 5,
+                          itemCard(
+                            netWork: ITEM_API + '${myMatch[0].item0}.png',
+                            hasData: myMatch[0].item0,
                           ),
-                          iconCard(),
+                          itemCard(
+                            netWork: ITEM_API + '${myMatch[0].item1}.png',
+                            hasData: myMatch[0].item1,
+                          ),
+                          itemCard(
+                            netWork: ITEM_API + '${myMatch[0].item2}.png',
+                            hasData: myMatch[0].item2,
+                          ),
+                          itemCard(
+                            netWork: ITEM_API + '${myMatch[0].item3}.png',
+                            hasData: myMatch[0].item3,
+                          ),
+                          itemCard(
+                            netWork: ITEM_API + '${myMatch[0].item4}.png',
+                            hasData: myMatch[0].item4,
+                          ),
+                          itemCard(
+                            netWork: ITEM_API + '${myMatch[0].item5}.png',
+                            hasData: myMatch[0].item5,
+                          ),
+                          itemCard(
+                            netWork: ITEM_API + '${myMatch[0].item6}.png',
+                            hasData: myMatch[0].item6,
+                          ),
                         ],
                       ),
                     ],
@@ -167,7 +235,6 @@ class Card extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                    color: Colors.red,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 12.0, right: 12.0),
                       child: Column(
@@ -176,10 +243,13 @@ class Card extends StatelessWidget {
                           Text(
                             '개인/2인 랭크',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[500]),
                           ),
-                          Text('1일 전'),
+                          Text(
+                            '1일 전',
+                            style: TextStyle(color: Colors.grey),
+                          ),
                         ],
                       ),
                     ),
@@ -194,10 +264,33 @@ class Card extends StatelessWidget {
   }
 
   Widget iconCard() {
-    return Container(
-      color: Colors.black,
-      width: 20,
-      height: 20,
+    return Padding(
+      padding: const EdgeInsets.only(right: 5.0),
+      child: Container(
+        color: Colors.black,
+        width: 20,
+        height: 20,
+      ),
+    );
+  }
+
+  Widget itemCard({required String netWork, required int hasData}) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 5.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Colors.grey.withOpacity(0.5),
+        ),
+        width: 23,
+        height: 23,
+        child: hasData != 0
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(netWork),
+              )
+            : null,
+      ),
     );
   }
 }
