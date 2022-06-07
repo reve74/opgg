@@ -139,104 +139,89 @@ class Card extends StatelessWidget {
                   color: Colors.white,
                   width: 240,
                   height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.network(
-                                CHAMPION_API+'${myMatch[0].championName}.png', fit: BoxFit.cover,
-                              width: 45,
-                              height: 45,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 20.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20.0),
+                              child: Image.network(
+                                CHAMPION_API + '${myMatch[0].championName}.png',
+                                fit: BoxFit.cover,
+                                width: 45,
+                                height: 45,
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              iconCard(),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              iconCard(),
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              iconCard(),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              iconCard(),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '${myMatchDetails.kills}/${myMatchDetails.deaths}/${myMatchDetails.assists}',
-                                style: TextStyle(fontSize: 22.0),
-                              ),
-                              SizedBox(
-                                height: 3,
-                              ),
-                              Text(
-                                '${((myMatchDetails.kills+myMatchDetails.assists)/myMatchDetails.deaths).toStringAsFixed(2)}:1 평점',
-                                style: TextStyle(fontSize: 12.0),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 5.0),
-                      Row(
-                        children: [
-                          itemCard(
-                            netWork: ITEM_API + '${myMatch[0].item0}.png',
-                            hasData: myMatch[0].item0,
-                          ),
-                          itemCard(
-                            netWork: ITEM_API + '${myMatch[0].item1}.png',
-                            hasData: myMatch[0].item1,
-                          ),
-                          itemCard(
-                            netWork: ITEM_API + '${myMatch[0].item2}.png',
-                            hasData: myMatch[0].item2,
-                          ),
-                          itemCard(
-                            netWork: ITEM_API + '${myMatch[0].item3}.png',
-                            hasData: myMatch[0].item3,
-                          ),
-                          itemCard(
-                            netWork: ITEM_API + '${myMatch[0].item4}.png',
-                            hasData: myMatch[0].item4,
-                          ),
-                          itemCard(
-                            netWork: ITEM_API + '${myMatch[0].item5}.png',
-                            hasData: myMatch[0].item5,
-                          ),
-                          itemCard(
-                            netWork: ITEM_API + '${myMatch[0].item6}.png',
-                            hasData: myMatch[0].item6,
-                          ),
-                        ],
-                      ),
-                    ],
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            spells(),
+                            spells(),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${myMatchDetails.kills}/${myMatchDetails.deaths}/${myMatchDetails.assists}',
+                                  style: const TextStyle(fontSize: 22.0),
+                                ),
+                                const SizedBox(
+                                  height: 3,
+                                ),
+                                Text(
+                                  '${((myMatchDetails.kills + myMatchDetails.assists) / myMatchDetails.deaths).toStringAsFixed(2)}:1 평점',
+                                  style: const TextStyle(fontSize: 12.0),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        Row(
+                          children: [
+                            itemCard(
+                              netWork: ITEM_API + '${myMatch[0].item0}.png',
+                              hasData: myMatch[0].item0,
+                            ),
+                            itemCard(
+                              netWork: ITEM_API + '${myMatch[0].item1}.png',
+                              hasData: myMatch[0].item1,
+                            ),
+                            itemCard(
+                              netWork: ITEM_API + '${myMatch[0].item2}.png',
+                              hasData: myMatch[0].item2,
+                            ),
+                            itemCard(
+                              netWork: ITEM_API + '${myMatch[0].item3}.png',
+                              hasData: myMatch[0].item3,
+                            ),
+                            itemCard(
+                              netWork: ITEM_API + '${myMatch[0].item4}.png',
+                              hasData: myMatch[0].item4,
+                            ),
+                            itemCard(
+                              netWork: ITEM_API + '${myMatch[0].item5}.png',
+                              hasData: myMatch[0].item5,
+                            ),
+                            itemCard(
+                              netWork: ITEM_API + '${myMatch[0].item6}.png',
+                              hasData: myMatch[0].item6,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Expanded(
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 12.0, right: 12.0),
+                      padding: const EdgeInsets.only(top: 20.0, right: 12.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -263,7 +248,19 @@ class Card extends StatelessWidget {
     );
   }
 
-  Widget iconCard() {
+  Widget spells() {
+    return Column(
+      children: [
+        spellCard(),
+        const SizedBox(
+          height: 5,
+        ),
+        spellCard(),
+      ],
+    );
+  }
+
+  Widget spellCard() {
     return Padding(
       padding: const EdgeInsets.only(right: 5.0),
       child: Container(

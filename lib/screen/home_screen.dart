@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:opgg/components/search_text_field.dart';
 import 'package:opgg/const/colors.dart';
 import 'package:opgg/model/patch_note.dart';
+import 'package:opgg/repository/repository.dart';
 import 'package:opgg/screen/search_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as parser;
@@ -50,15 +50,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Future getChampions() async{
+    final response = await SummonerRepository.getChampions();
+    print(response.keys);
+    // print(response);
+    return response;
+  }
+
+
   @override
   void initState() {
     super.initState();
     getPatchNote();
+    // getChampions();
   }
 
   @override
   void dispose() {
     getPatchNote();
+    // getChampions();
     super.dispose();
   }
 
@@ -151,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
               bottom: 5,
               child: Text(
                 notes[index].title,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 10.0,
                     color: Colors.white,
                     fontWeight: FontWeight.bold),
@@ -173,6 +183,24 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             topBar(context),
+            // GridView.builder(
+            //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            //     crossAxisCount: 5,
+            //     childAspectRatio:  1/ 2,
+            //     mainAxisSpacing: 10,
+            //     crossAxisSpacing: 10,
+            //   ),
+            //   itemCount: 16,
+            //   itemBuilder: (BuildContext context, int index) {
+            //     return Container(
+            //       child: Column(
+            //         children: [
+            //
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),

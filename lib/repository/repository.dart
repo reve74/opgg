@@ -1,8 +1,7 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:opgg/const/data.dart';
-import 'package:opgg/model/gameList.dart';
+import 'package:opgg/model/champion.dart';
+import 'package:opgg/model/champion_model.dart';
 import 'package:opgg/model/match_model.dart';
 import 'package:opgg/model/summoner_league_model.dart';
 import 'package:opgg/model/summoner_model.dart';
@@ -37,7 +36,7 @@ class SummonerRepository {
         'https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/$puuid/ids?',
         queryParameters: {
           'start': 0,
-          'count': 5,
+          'count': 10,
           'api_key': API_KEY,
         });
     // print(response.data);
@@ -52,7 +51,6 @@ class SummonerRepository {
         queryParameters: {
           'api_key': API_KEY,
         });
-
 
     // print(response.data['info']['participants']
     //     .map<MatchModel>((e) => MatchModel.fromJson(json: e))
@@ -70,12 +68,25 @@ class SummonerRepository {
 
     // return MatchModel.fromJson(json: response.data['info']['participants'][0]);
 
-
-
     return response.data['info']['participants']
         .map<MatchModel>(
           (e) => MatchModel.fromJson(json: e),
         )
         .toList();
   }
+
+  static Future getChampions() async {
+    final response = await Dio().get(
+        'http://ddragon.leagueoflegends.com/cdn/12.10.1/data/en_US/champion.json');
+
+    print(response.data['data'].values.toList());
+    print("여기");
+    print(response.data['data']['Aatrox']);
+    print(response.data['data']['Ahri']);
+    return response.data['data'].values
+        .map(
+          (e) => Champion(keys: e),
+        );
+  }
+
 }
