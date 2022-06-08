@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String link;
 
-  WebViewScreen({
+  const WebViewScreen({
     required this.link,
     Key? key,
   }) : super(key: key);
@@ -25,9 +26,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: Get.back,
           icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.black,

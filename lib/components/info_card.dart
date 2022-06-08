@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:opgg/const/colors.dart';
 import 'package:opgg/const/data.dart';
-
+import 'package:opgg/controller/summoner_controller.dart';
 
 class InfoCard extends StatelessWidget {
+  SummonerController s = Get.put(SummonerController());
+
   final String name;
   final String summonerLevel;
   final String profileIconId;
+  final String puuid;
+  final VoidCallback onPressed;
 
-  const InfoCard({
+  InfoCard({
     required this.name,
     required this.summonerLevel,
     required this.profileIconId,
+    required this.puuid,
+    required this.onPressed,
     Key? key,
   }) : super(key: key);
 
@@ -67,7 +74,7 @@ class InfoCard extends StatelessWidget {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(25.0),
                               child: Image.network(
-                                PROFILE_ICON_API+'$profileIconId.png',
+                                PROFILE_ICON_API + '$profileIconId.png',
                                 width: 70,
                                 height: 70,
                               ),
@@ -86,9 +93,7 @@ class InfoCard extends StatelessWidget {
                                   child: Text(
                                     summonerLevel,
                                     style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13.0
-                                    ),
+                                        color: Colors.white, fontSize: 13.0),
                                   ),
                                 ),
                               ),
@@ -128,7 +133,7 @@ class InfoCard extends StatelessWidget {
                               style: ElevatedButton.styleFrom(
                                 primary: Colors.indigoAccent[400],
                               ),
-                              onPressed: () {},
+                              onPressed: onPressed,
                               child: const Text('전적 갱신'),
                             ),
                           ),

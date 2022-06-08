@@ -1,49 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:opgg/components/grey_box.dart';
 import 'package:opgg/components/info_card.dart';
 import 'package:opgg/components/info_list_card.dart';
 import 'package:opgg/components/match_card.dart';
 import 'package:opgg/components/rank_card.dart';
+import 'package:opgg/controller/summoner_controller.dart';
 import 'package:opgg/model/summoner_league_model.dart';
 import 'package:opgg/model/summoner_model.dart';
 import 'package:opgg/model/summoner_tier.dart';
 import 'package:opgg/repository/repository.dart';
 
-class InfoScreen extends StatefulWidget {
+class InfoScreen extends GetView<SummonerController> {
   final Future<SummonerModel> future;
   // final SummonerTier smTier;
 
-  const InfoScreen({
+  InfoScreen({
     required this.future,
     // required this.smTier,
 
     Key? key,
   }) : super(key: key);
-
-  @override
-  State<InfoScreen> createState() => _InfoScreenState();
-}
-
-class _InfoScreenState extends State<InfoScreen> {
-  Future<SummonerLeagueModel> getSummonerLeagueInfo(
-      {required summonerId}) async {
-    final response =
-        await SummonerRepository.getSummonerLeagueInfo(summonerId: summonerId);
-
-    return response;
-  }
-
-  Future<List> getMatchIdFromSummoner({required puuid}) async {
-    final response =
-        await SummonerRepository.getMatchIdFromSummoner(puuid: puuid);
-    // List matchList = [];
-    // matchList.addAll(response);
-
-    // print(response);
-
-    return response;
-  }
-
-
+  SummonerController s = Get.put(SummonerController());
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +30,7 @@ class _InfoScreenState extends State<InfoScreen> {
 
     return Scaffold(
       body: FutureBuilder<SummonerModel>(
-        future: widget.future,
+        future: future,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(child: Text('에러가 있습니다'));
@@ -77,6 +55,12 @@ class _InfoScreenState extends State<InfoScreen> {
                     name: '${sm.name}',
                     summonerLevel: '${sm.summonerLevel}',
                     profileIconId: '${sm.profileIconId}',
+                    puuid: '${sm.puuid}',
+                    onPressed: () {
+                      final matchId = s.getMatchIdFromSummoner(puuid: sm.puuid);
+                      final match = s.getMatch(matchId: matchId, puuid: sm.puuid);
+                      print(match);
+                    },
                   ),
                   const SizedBox(height: 20),
                   // 티어, 랭크 정보 표시
@@ -86,7 +70,8 @@ class _InfoScreenState extends State<InfoScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FutureBuilder<SummonerLeagueModel>(
-                          future: getSummonerLeagueInfo(summonerId: summonerId),
+                          future: controller.getSummonerLeagueInfo(
+                              summonerId: summonerId),
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
                               return const Center(
@@ -118,7 +103,7 @@ class _InfoScreenState extends State<InfoScreen> {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: [
+                            children: const [
                               InfoListCard(),
                               SizedBox(width: 10),
                               InfoListCard(),
@@ -131,15 +116,12 @@ class _InfoScreenState extends State<InfoScreen> {
                       ],
                     ),
                   ),
-                  Container(
-                    height: 8,
-                    color: Colors.grey[200],
-                  ),
+                  const GreyBox(),
                   // ...List.generate(
                   //   5,
                   //   (index) =>
                   FutureBuilder<List>(
-                    future: getMatchIdFromSummoner(puuid: sm.puuid),
+                    future: controller.getMatchIdFromSummoner(puuid: sm.puuid),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return const Center(child: Text('에러'));
@@ -150,7 +132,10 @@ class _InfoScreenState extends State<InfoScreen> {
 
                       final matchList = snapshot.data;
                       print(matchList);
-                      return MatchCard(matchList: matchList!, puuid: sm.puuid,);
+                      return MatchCard(
+                        matchList: matchList!,
+                        puuid: sm.puuid,
+                      );
                     },
                   ),
                   // ),

@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:opgg/const/data.dart';
+import 'package:opgg/controller/summoner_controller.dart';
 import 'package:opgg/model/match_model.dart';
 import 'package:opgg/repository/repository.dart';
 
-class MatchCard extends StatelessWidget {
+class MatchCard extends GetView<SummonerController> {
+
   List matchList;
   String puuid;
 
@@ -14,22 +17,7 @@ class MatchCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  Future<List<MatchModel>> getMatch({required matchId, required puuid}) async {
-    // Map<, MatchModel> matches = {};
-    final response =
-        await SummonerRepository.getMatch(matchId: matchId, puuid: puuid);
 
-    // List<Future> futures = [];
-    // final results = await Future.wait(futures);
-    //
-    // for(int i =0; i<matchList.length; i++) {
-    //   final key = matchList.elementAt(i);
-    //   final value = results[i];
-    // }
-
-    // print(response);
-    return response;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +29,7 @@ class MatchCard extends StatelessWidget {
             .entries
             .map(
               (e) => Card(
-                future: getMatch(matchId: e.value, puuid: puuid),
+                future: controller.getMatch(matchId: e.value, puuid: puuid),
                 puuid: puuid,
               ),
             )
